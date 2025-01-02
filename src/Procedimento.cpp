@@ -46,29 +46,21 @@ void Procedimento::setTempoOcupadoAte(int index, double tempo) {
 // Método para alocar unidade
 // Encontra uma unidade disponível e retorna o horário de término
 double Procedimento::alocarUnidade(double tempoAtual) {
-    int unidadeEscolhida = -1; // Índice da unidade escolhida
-    double menorTempoOcupado = tempoOcupadoAte[0];
-
-    // Procura pela primeira unidade disponível ou que irá liberar antes
-    for (int i = 0; i < numeroUnidades; i++) {
-        if (tempoOcupadoAte[i] <= tempoAtual) {
-            unidadeEscolhida = i;
-            break; // Encontra a primeira unidade livre
-        }
-        // Se nenhuma estiver livre, escolhe a que liberar mais cedo
-        if (tempoOcupadoAte[i] < menorTempoOcupado) {
-            menorTempoOcupado = tempoOcupadoAte[i];
-            unidadeEscolhida = i;
+    // Encontra a primeira unidade que esteja livre (tempoOcupadoAte[u] <= tempoAtual)
+    for(int u=0; u < numeroUnidades; u++){
+        if(tempoOcupadoAte[u] <= tempoAtual) {
+            // Unidade livre no tempoAtual
+            // => Vai ficar ocupada até (tempoAtual + tempoMedio)
+            double tempoFim = tempoAtual + tempoMedio;
+            // Se quiser registrar o tempo ocioso, é (tempoAtual - tempoOcupadoAte[u]) 
+            // mas aqui tempoOcupadoAte[u] já <= tempoAtual, então ocioso = tempoAtual - tempoOcupadoAte[u].
+            // ...
+            tempoOcupadoAte[u] = tempoFim;
+            return tempoFim;
         }
     }
-
-    // Atualiza o tempo ocupado da unidade escolhida
-    if (unidadeEscolhida != -1) {
-        tempoOcupadoAte[unidadeEscolhida] = tempoAtual + tempoMedio;
-        return tempoAtual + tempoMedio; // Retorna o horário de término
-    }
-
-    return -1.0; // Indica erro caso nenhuma unidade seja encontrada
+    // Se não encontrou nenhuma unidade livre...
+    return -1.0;
 }
 
 // Método para liberar uma unidade

@@ -9,230 +9,262 @@
 
 // Constantes
 #define MAX_PROCEDIMENTOS 6
-#define MAX_PACIENTES 10000
+#define MAX_PACIENTES     10000
 
-// Enum de tipos de evento
-enum TipoEvento
-{
+// Três filas por procedimento: 0=Verde, 1=Amarelo, 2=Vermelho
+#define NUM_PRIORIDADES   3
+
+// Enum de Tipos de Evento
+enum TipoEvento {
     EVT_CHEGADA = 1,
-    EVT_FIM_TRIAGEM = 2,
-    EVT_FIM_ATENDIMENTO = 3,
-    EVT_FIM_MEDIDAS = 4,
-    EVT_FIM_TESTES = 5,
-    EVT_FIM_IMAGEM = 6,
-    EVT_FIM_INSTRUMENTOS = 7
+    EVT_FIM_TRIAGEM,
+    EVT_FIM_ATENDIMENTO,
+    EVT_FIM_MEDIDAS,
+    EVT_FIM_TESTES,
+    EVT_FIM_IMAGEM,
+    EVT_FIM_INSTRUMENTOS
 };
 
-// Variáveis globais
-Procedimento *procedimentos[MAX_PROCEDIMENTOS];
-Paciente *pacientes[MAX_PACIENTES];
-Fila filas[MAX_PROCEDIMENTOS];
-Escalonador escalonador;
-int numeroPacientes = 0;
+// Variáveis Globais
+Procedimento* procedimentos[MAX_PROCEDIMENTOS];
+Paciente*     pacientes[MAX_PACIENTES];
+Fila          filas[MAX_PROCEDIMENTOS][NUM_PRIORIDADES];
+Escalonador   escalonador;
+int           numeroPacientes = 0;
 
-void readProcedimentos(FILE *arquivo)
+// ---------------------------------------------------------------------------
+void readProcedimentos(FILE* arquivo)
 {
     printf("Lendo os procedimentos...\n");
-    for (int i = 0; i < MAX_PROCEDIMENTOS; i++)
-    {
+    for(int i=0; i<MAX_PROCEDIMENTOS; i++){
         double tempoMedio;
         int numUnidades;
         fscanf(arquivo, "%lf %d", &tempoMedio, &numUnidades);
         procedimentos[i] = new Procedimento(tempoMedio, numUnidades);
-        printf("Procedimento %d: tempo médio = %.2f, unidades = %d\n", i + 1, tempoMedio, numUnidades);
+        printf("Procedimento %d: tempo=%.2f, unidades=%d\n", i, tempoMedio, numUnidades);
     }
 }
 
-void readPacientes(FILE *arquivo)
+// ---------------------------------------------------------------------------
+void readPacientes(FILE* arquivo)
 {
     fscanf(arquivo, "%d", &numeroPacientes);
     printf("Número de pacientes: %d\n", numeroPacientes);
 
-    for (int i = 0; i < numeroPacientes; i++)
-    {
+    for(int i=0; i<numeroPacientes; i++){
         char id[50];
         int altaImediata, ano, mes, dia, hora;
-        int grauUrgencia, medidas, testes, exames, instrumentos;
-
+        int grauUrg, mh, ts, ex, inst;
         fscanf(arquivo, "%s %d %d %d %d %d %d %d %d %d %d",
                id, &altaImediata, &ano, &mes, &dia, &hora,
-               &grauUrgencia, &medidas, &testes, &exames, &instrumentos);
+               &grauUrg, &mh, &ts, &ex, &inst);
 
-        printf("[readPacientes] Paciente %s: Medidas = %d, Testes = %d, Exames = %d, Instrumentos = %d\n",
-               id, medidas, testes, exames, instrumentos);
+        printf("[readPacientes] Pac %s: urg=%d, mh=%d, ts=%d, ex=%d, inst=%d\n",
+               id, grauUrg, mh, ts, ex, inst);
 
-        pacientes[i] = new Paciente(id, altaImediata, ano, mes, dia, hora,
-                                    grauUrgencia, medidas, testes, exames, instrumentos);
+        Paciente* p = new Paciente(id, altaImediata, ano, mes, dia, hora,
+                                   grauUrg, mh, ts, ex, inst);
+        pacientes[i] = p;
 
-        Evento evento;
-        double tChegada = pacientes[i]->calcularTempoEmDouble(pacientes[i]->getDataHoraAdmissao());
-        evento.tempoOcorrencia = tChegada;
-        evento.tipoEvento = EVT_CHEGADA;
-        evento.paciente = pacientes[i];
-        evento.dadosExtras = NULL;
+        // Cria evento de chegada
+        Evento ev;
+        double tch = p->calcularTempoEmDouble(p->getDataHoraAdmissao());
+        ev.tempoOcorrencia = tch;
+        ev.tipoEvento = EVT_CHEGADA;
+        ev.paciente   = p;
+        ev.dadosExtras= NULL;
 
-        escalonador.insereEvento(evento);
-        printf("[readPacientes] Escalonando evento de Chegada para o paciente %s no tempo %.2f\n", id, tChegada);
+        escalonador.insereEvento(ev);
+        printf("[readPacientes] Escalonando CHEGADA p/ %s, t=%.2f\n", id, tch);
     }
 }
 
+// ---------------------------------------------------------------------------
+// processarFilas: 
+//  - i=0..5 => triagem..instrumentos
+//  - pr=2 => vermelho, pr=1 => amarelo, pr=0 => verde
+//  - Se o paciente tem X repetições do procedimento, ele faz TUDO de uma só vez 
+//    => tempoBloco = X * tempoMedio
+// ---------------------------------------------------------------------------
 void processarFilas(double tempoAtual)
 {
-    for (int i = 0; i < 6; i++)
+    for(int i = 0; i < MAX_PROCEDIMENTOS; i++)
     {
-        printf("[processarFilas] Verificando fila %d\n", i);
-        while (!filas[i].filaVazia())
+        // Prioridade vermelha(2) -> amarela(1) -> verde(0)
+        for(int pr = 2; pr >= 0; pr--)
         {
-            Paciente *p = filas[i].desenfileira();
-
-            printf("[processarFilas] Paciente %s retirado da fila %d\n", p->getId(), i);
-            printf("[processarFilas] Paciente %s: Tempo em atendimento antes = %.2f horas, Tempo total antes = %.2f horas\n",
-                   p->getId(), p->getTempoEmAtendimento(), p->getTempoTotal());
-
-            double tempoEspera = tempoAtual - p->getHoraEntradaFila();
-            p->setTempoEmEspera(p->getTempoEmEspera() + tempoEspera);
-
-            double tMedio = procedimentos[i]->getTempoMedio();
-            p->setTempoEmAtendimento(p->getTempoEmAtendimento() + tMedio);
-            p->setTempoTotal(p->getTempoTotal() + tMedio);
-
-            printf("[processarFilas] Paciente %s: Tempo em atendimento depois = %.2f horas, Tempo total depois = %.2f horas\n",
-                   p->getId(), p->getTempoEmAtendimento(), p->getTempoTotal());
-
-            int vezesRestantes = 0;
-            bool retornarFila = false;
-            switch (i)
+            while(!filas[i][pr].filaVazia())
             {
-            case 2:
-                vezesRestantes = p->getMedidasHospitalares();
-                printf("[processarFilas] Paciente %s: Medidas restantes = %d\n", p->getId(), vezesRestantes);
-                if (vezesRestantes > 1)
-                {
-                    p->setMedidasHospitalares(vezesRestantes - 1);
-                    retornarFila = true;
-                }
-                break;
-            case 3:
-                vezesRestantes = p->getTestes();
-                printf("[processarFilas] Paciente %s: Testes restantes = %d\n", p->getId(), vezesRestantes);
-                if (vezesRestantes > 1)
-                {
-                    p->setTestes(vezesRestantes - 1);
-                    retornarFila = true;
-                }
-                break;
-            case 4:
-                vezesRestantes = p->getExames();
-                printf("[processarFilas] Paciente %s: Exames restantes = %d\n", p->getId(), vezesRestantes);
-                if (vezesRestantes > 1)
-                {
-                    p->setExames(vezesRestantes - 1);
-                    retornarFila = true;
-                }
-                break;
-            case 5:
-                vezesRestantes = p->getInstrumentos();
-                printf("[processarFilas] Paciente %s: Instrumentos restantes = %d\n", p->getId(), vezesRestantes);
-                if (vezesRestantes > 1)
-                {
-                    p->setInstrumentos(vezesRestantes - 1);
-                    retornarFila = true;
-                }
-                break;
-            default:
-                break;
-            }
+                Paciente* p = filas[i][pr].desenfileira();
 
-            if (retornarFila)
-            {
-                p->registrarEntradaFila(tempoAtual + tMedio);
-                filas[i].enfileira(p);
-                printf("[processarFilas] Paciente %s reinserido na fila %d para próxima execução. Restam %d execuções.\n",
-                       p->getId(), i, vezesRestantes - 1);
-            }
-            else
-            {
-                Evento novoEvt;
-                novoEvt.tempoOcorrencia = tempoAtual + tMedio;
-                novoEvt.tipoEvento = i + 2;
-                novoEvt.paciente = p;
-                novoEvt.dadosExtras = NULL;
-                escalonador.insereEvento(novoEvt);
-                printf("[processarFilas] Evento FIM_%d escalonado para paciente %s no tempo %.2f\n",
-                       i, p->getId(), novoEvt.tempoOcorrencia);
+                // Tenta alocar
+                double tempoFim = procedimentos[i]->alocarUnidade(tempoAtual);
+                if(tempoFim < 0) {
+                    // Nao achou unidade => recoloca p e sai
+                    filas[i][pr].enfileira(p);
+                    break;
+                }
+
+                // tempo de espera
+                double espera = (tempoAtual - p->getHoraEntradaFila());
+                p->setTempoEmEspera(p->getTempoEmEspera() + espera);
+
+                // Ver quantas repeticoes iremos fazer "de uma vez"
+                int repet = 1;
+                switch(i){
+                    case 2: repet = p->getMedidasHospitalares(); break;
+                    case 3: repet = p->getTestes();              break;
+                    case 4: repet = p->getExames();              break;
+                    case 5: repet = p->getInstrumentos();        break;
+                    default: repet = 1; // triagem(0) e atendimento(1) => 1 so
+                }
+
+                double tMedio = procedimentos[i]->getTempoMedio();
+                double tempoBloco = repet * tMedio; // faz tudo seguidamente
+                // Ajustar a "unidade ocupada" ate (tempoAtual+tempoBloco).
+                // Precisamos sobrescrever a ocupacao. Supondo que 
+                // alocarUnidade(tempoAtual) setou tempoOcupadoAte[u] = tempoAtual + tMedio,
+                // teriamos que forçar => tempoOcupadoAte[u] = tempoAtual + tempoBloco
+                // (depende de como seu Procedimento está implementado).
+                // Ex.: se Procedimento tem "ultimoIndiceAlocado", podemos setar...
+                // Para simplificar, reescrevemos 'tempoFim':
+                tempoFim = tempoAtual + tempoBloco;
+
+                // Soma no tempoEmAtendimento e tempoTotal
+                p->setTempoEmAtendimento(p->getTempoEmAtendimento() + tempoBloco);
+                p->setTempoTotal(p->getTempoTotal() + tempoBloco);
+
+                // Gera evento de fim
+                Evento evt;
+                evt.tempoOcorrencia = tempoFim;
+                evt.tipoEvento = i + 2;
+                evt.paciente  = p;
+                evt.dadosExtras = NULL;
+                escalonador.insereEvento(evt);
+
+                printf("[processarFilas] Pac %s urg=%d no proc=%d c/%d repet, fim=%.2f, espera=%.2f\n",
+                       p->getId(), p->getGrauUrgencia(), i, repet, tempoFim, espera);
             }
         }
     }
 }
 
+// ---------------------------------------------------------------------------
 void runSimulation()
 {
     double tempoAtual = 0.0;
-    while (!escalonador.estaVazio() ||
-           !filas[0].filaVazia() || !filas[1].filaVazia() ||
-           !filas[2].filaVazia() || !filas[3].filaVazia() ||
-           !filas[4].filaVazia() || !filas[5].filaVazia())
+
+    while(true)
     {
-        Evento ev = escalonador.retiraProximoEvento();
-        tempoAtual = ev.tempoOcorrencia;
-        Paciente *p = ev.paciente;
+        bool haEventos = !escalonador.estaVazio();
+        bool filasNaoVazias = false;
+        // Checa se há pacientes em qualquer fila
+        for(int i=0; i<MAX_PROCEDIMENTOS; i++){
+            for(int pr=0; pr<NUM_PRIORIDADES; pr++){
+                if(!filas[i][pr].filaVazia()){
+                    filasNaoVazias = true;
+                    break;
+                }
+            }
+            if(filasNaoVazias) break;
+        }
 
-        printf("[runSimulation] Processando evento tipo=%d para paciente=%s no tempo %.2f\n",
-               ev.tipoEvento, p->getId(), tempoAtual);
+        if(!haEventos && !filasNaoVazias) {
+            // acabou
+            break;
+        }
+        if(!haEventos && filasNaoVazias){
+            // só filas => processa
+            processarFilas(tempoAtual);
+            continue;
+        }
 
-        switch (ev.tipoEvento)
+        // Retira proximo evento
+        Evento e = escalonador.retiraProximoEvento();
+        tempoAtual = e.tempoOcorrencia;
+        Paciente* p = e.paciente;
+
+        switch(e.tipoEvento)
         {
         case EVT_CHEGADA:
-            p->registrarEntradaFila(tempoAtual);
-            filas[0].enfileira(p);
-            printf("[runSimulation] Paciente %s enfileirado na fila 0\n", p->getId());
-            break;
+        {
+            // insere na fila triagem i=0, pr= p->getGrauUrgencia()
+            int urg = p->getGrauUrgencia();
+            p->setHoraEntradaFila(tempoAtual);
+            filas[0][urg].enfileira(p);
+
+            printf("[runSim] Pac %s CHEGOU => proc=0, urg=%d, t=%.2f\n",
+                   p->getId(), urg, tempoAtual);
+        }
+        break;
 
         case EVT_FIM_TRIAGEM:
-            p->registrarEntradaFila(tempoAtual);
-            filas[1].enfileira(p);
-            printf("[runSimulation] Paciente %s enfileirado na fila 1\n", p->getId());
-            break;
+        {
+            // Triagem => proximo i=1 (atendimento)
+            int urg = p->getGrauUrgencia();
+            p->setHoraEntradaFila(tempoAtual);
+            filas[1][urg].enfileira(p);
+            printf("[runSim] Pac %s => Atendimento(1)\n", p->getId());
+        }
+        break;
 
         case EVT_FIM_ATENDIMENTO:
-            if (p->getAltaImediata())
-            {
+        {
+            if(p->getAltaImediata()){
                 p->calcularAltaEtempoTotal();
-                printf("[runSimulation] Paciente %s teve alta imediata.\n", p->getId());
+                printf("[runSim] Pac %s => Alta Imediata!\n", p->getId());
+            } else {
+                // i=2 => Medidas
+                int urg = p->getGrauUrgencia();
+                p->setHoraEntradaFila(tempoAtual);
+                filas[2][urg].enfileira(p);
+                printf("[runSim] Pac %s => Medidas(2)\n", p->getId());
             }
-            else
-            {
-                p->registrarEntradaFila(tempoAtual);
-                filas[2].enfileira(p);
-                printf("[runSimulation] Paciente %s enfileirado na fila 2\n", p->getId());
-            }
-            break;
+        }
+        break;
 
         case EVT_FIM_MEDIDAS:
-            p->registrarEntradaFila(tempoAtual);
-            filas[3].enfileira(p);
-            printf("[runSimulation] Paciente %s enfileirado na fila 3\n", p->getId());
-            break;
+        {
+            // Já executou TUDO de uma só vez => setMedidasHospitalares(0)
+            p->setMedidasHospitalares(0);
+            // Proximo => i=3 => Testes
+            int urg = p->getGrauUrgencia();
+            p->setHoraEntradaFila(tempoAtual);
+            filas[3][urg].enfileira(p);
+            printf("[runSim] Pac %s => Testes(3)\n", p->getId());
+        }
+        break;
 
         case EVT_FIM_TESTES:
-            p->registrarEntradaFila(tempoAtual);
-            filas[4].enfileira(p);
-            printf("[runSimulation] Paciente %s enfileirado na fila 5\n", p->getId());
-            break;
+        {
+            p->setTestes(0);
+            int urg = p->getGrauUrgencia();
+            p->setHoraEntradaFila(tempoAtual);
+            filas[4][urg].enfileira(p);
+            printf("[runSim] Pac %s => Exames(4)\n", p->getId());
+        }
+        break;
 
         case EVT_FIM_IMAGEM:
-            p->registrarEntradaFila(tempoAtual);
-            filas[5].enfileira(p);
-            printf("[runSimulation] Paciente %s enfileirado novamente na fila 4\n", p->getId());
-            break;
+        {
+            p->setExames(0);
+            int urg = p->getGrauUrgencia();
+            p->setHoraEntradaFila(tempoAtual);
+            filas[5][urg].enfileira(p);
+            printf("[runSim] Pac %s => Instrumentos(5)\n", p->getId());
+        }
+        break;
 
         case EVT_FIM_INSTRUMENTOS:
+        {
+            p->setInstrumentos(0);
             p->calcularAltaEtempoTotal();
-            printf("[runSimulation] Paciente %s terminou todos os procedimentos e recebeu alta.\n", p->getId());
-            break;
+            printf("[runSim] Pac %s => Alta final!\n", p->getId());
+        }
+        break;
 
         default:
-            printf("[runSimulation] Evento desconhecido para paciente %s.\n", p->getId());
+            printf("[runSim] Evento %d desconhecido.\n", e.tipoEvento);
             break;
         }
 
@@ -240,70 +272,73 @@ void runSimulation()
     }
 }
 
+// ---------------------------------------------------------------------------
 void printResults()
 {
     printf("\n==========\nResultados da simulação:\n");
-    for (int i = 0; i < numeroPacientes; i++)
-    {
-        Paciente *p = pacientes[i];
-        if (!p)
-            continue;
+    for(int i=0; i<numeroPacientes; i++){
+        Paciente* p = pacientes[i];
+        if(!p) continue;
 
-        struct tm admissao = p->getDataHoraAdmissao();
-        struct tm alta = p->getDataHoraAlta();
+        struct tm adm = p->getDataHoraAdmissao();
+        struct tm alt = p->getDataHoraAlta();
 
-        char admissaoStr[100], altaStr[100];
-        strftime(admissaoStr, sizeof(admissaoStr), "%a %b %d %H:%M:%S %Y", &admissao);
-        strftime(altaStr, sizeof(altaStr), "%a %b %d %H:%M:%S %Y", &alta);
+        char admStr[80], altStr[80];
+        strftime(admStr, sizeof(admStr), "%a %b %d %H:%M:%S %Y", &adm);
+        strftime(altStr, sizeof(altStr), "%a %b %d %H:%M:%S %Y", &alt);
 
-        double tTotal = p->getTempoTotal();
-        double tAtendimento = p->getTempoEmAtendimento();
-        double tEspera = p->getTempoEmEspera();
+        double tAt  = p->getTempoEmAtendimento();
+        double tEsp = p->getTempoEmEspera();
+        // se quiser que tempoTotal = tAt + tEsp
+        p->setTempoTotal(tAt + tEsp);
+        double tTot = p->getTempoTotal();
 
-        printf("%s %s %s %.2f %.2f %.2f\n",
-               p->getId(), admissaoStr, altaStr, tTotal, tAtendimento, tEspera);
+        printf("%s %s %s TOT=%.2f AT=%.2f ESP=%.2f\n",
+               p->getId(), admStr, altStr, tTot, tAt, tEsp);
     }
 }
 
+// ---------------------------------------------------------------------------
 void finalizeSimulation()
 {
     printf("\nFinalizando a simulação...\n");
-    for (int i = 0; i < numeroPacientes; i++)
-    {
+    // Libera pacientes
+    for(int i=0; i<numeroPacientes; i++){
         delete pacientes[i];
         pacientes[i] = NULL;
     }
-    for (int i = 0; i < MAX_PROCEDIMENTOS; i++)
-    {
+    // Libera procedimentos
+    for(int i=0; i<MAX_PROCEDIMENTOS; i++){
         delete procedimentos[i];
         procedimentos[i] = NULL;
-        filas[i].finaliza();
+        // finaliza as 3 subfilas
+        for(int pr=0; pr<NUM_PRIORIDADES; pr++){
+            filas[i][pr].finaliza();
+        }
     }
     escalonador.finaliza();
 }
 
-int main(int argc, char *argv[])
+// ---------------------------------------------------------------------------
+int main(int argc, char* argv[])
 {
-    if (argc < 2)
-    {
+    if(argc<2){
         printf("Uso: %s <arquivo.csv>\n", argv[0]);
         return 1;
     }
 
-    FILE *arquivo = fopen(argv[1], "r");
-    if (!arquivo)
-    {
-        printf("Erro ao abrir o arquivo: %s\n", argv[1]);
+    FILE* arq = fopen(argv[1], "r");
+    if(!arq){
+        printf("Erro ao abrir %s\n", argv[1]);
         return 1;
     }
 
-    readProcedimentos(arquivo);
-    readPacientes(arquivo);
-    fclose(arquivo);
+    readProcedimentos(arq);
+    readPacientes(arq);
+    fclose(arq);
 
     runSimulation();
     printResults();
     finalizeSimulation();
-
     return 0;
 }

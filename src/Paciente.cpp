@@ -88,7 +88,7 @@ void Paciente::registrarFimAtendimento(double horaAtual) {
 // Calcular data/hora de alta e tempo total
 void Paciente::calcularAltaEtempoTotal() {
     dataHoraAlta = dataHoraAdmissao; // Partimos da admissão
-    dataHoraAlta.tm_hour += 4; // Exemplo: Adiciona 4 horas para alta
+    dataHoraAlta.tm_hour += tempoEmAtendimento; // Exemplo: Adiciona 4 horas para alta
     mktime(&dataHoraAlta); // Normaliza a data
     horaAlta = calcularTempoEmDouble(dataHoraAlta);
     tempoTotal = horaAlta - horaChegada; // Calcula tempo total
