@@ -3,33 +3,71 @@
 
 #include "Paciente.h"
 
+/**
+ * @class Fila
+ * @brief Representa uma fila para gerenciar pacientes em um hospital.
+ *
+ * A classe Fila utiliza uma estrutura encadeada para armazenar objetos do tipo Paciente.
+ * Ela permite enfileirar novos pacientes, desenfileirar o próximo paciente e verificar
+ * se a fila está vazia.
+ */
 class Fila {
 private:
+    /**
+     * @struct Nodo
+     * @brief Representa um nodo da fila, contendo um paciente e o próximo nodo.
+     */
     struct Nodo {
-        Paciente* paciente; // Ponteiro para o paciente
-        Nodo* proximo;      // Próximo nodo na lista
+        Paciente* paciente; ///< Ponteiro para o paciente armazenado no nodo.
+        Nodo* proximo;      ///< Ponteiro para o próximo nodo na fila.
     };
 
-    Nodo* inicio; // Ponteiro para o início da fila
-    Nodo* fim;    // Ponteiro para o fim da fila
+    Nodo* inicio; ///< Ponteiro para o início da fila.
+    Nodo* fim;    ///< Ponteiro para o fim da fila.
 
 public:
-    // Construtor
+    /**
+     * @brief Construtor padrão da classe Fila.
+     *
+     * Inicializa os ponteiros inicio e fim como NULL.
+     */
     Fila();
 
-    // Destrutor
+    /**
+     * @brief Destrutor da classe Fila.
+     *
+     * Libera todos os nós da fila antes de destruir o objeto.
+     */
     ~Fila();
 
-    // Enfileira um paciente na fila
+    /**
+     * @brief Inicializa a fila, definindo os ponteiros inicio e fim como NULL.
+     */
+    void inicializa();
+
+    /**
+     * @brief Adiciona um novo paciente ao final da fila.
+     * @param paciente Ponteiro para o objeto Paciente a ser enfileirado.
+     */
     void enfileira(Paciente* paciente);
 
-    // Desenfileira um paciente da fila (retorna o ponteiro)
+    /**
+     * @brief Remove e retorna o paciente no início da fila.
+     * @return Ponteiro para o objeto Paciente removido ou NULL se a fila estiver vazia.
+     */
     Paciente* desenfileira();
 
-    // Verifica se a fila está vazia
+    /**
+     * @brief Verifica se a fila está vazia.
+     * @return true se a fila estiver vazia, false caso contrário.
+     */
     bool filaVazia() const;
 
-    // Finaliza a fila e libera a memória
+    /**
+     * @brief Libera todos os nós da fila.
+     *
+     * Remove todos os pacientes da fila, garantindo que nenhum nó seja deixado na memória.
+     */
     void finaliza();
 };
 

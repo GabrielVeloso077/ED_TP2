@@ -1,18 +1,34 @@
 #include "Fila.h"
 #include <cstddef> // Para NULL
 
+// -----------------------------------------------------------------------------
 // Construtor
-// Inicializa os ponteiros inicio e fim como NULL
-Fila::Fila() : inicio(NULL), fim(NULL) {}
+// Chamamos inicializa() para garantir que inicio e fim começam como NULL
+// -----------------------------------------------------------------------------
+Fila::Fila() {
+    inicializa();
+}
 
+// -----------------------------------------------------------------------------
 // Destrutor
-// Chama o método finaliza para liberar todos os nodos
+// Chama finaliza() para liberar todos os nós antes de destruir o objeto
+// -----------------------------------------------------------------------------
 Fila::~Fila() {
     finaliza();
 }
 
-// Enfileira
+// -----------------------------------------------------------------------------
+// 1. Inicializa
+// -----------------------------------------------------------------------------
+void Fila::inicializa() {
+    inicio = NULL;
+    fim = NULL;
+}
+
+// -----------------------------------------------------------------------------
+// 2. Enfileira
 // Adiciona um novo paciente ao final da fila
+// -----------------------------------------------------------------------------
 void Fila::enfileira(Paciente* paciente) {
     // Cria um novo nodo
     Nodo* novoNodo = new Nodo;
@@ -30,8 +46,10 @@ void Fila::enfileira(Paciente* paciente) {
     }
 }
 
-// Desenfileira
+// -----------------------------------------------------------------------------
+// 3. Desenfileira
 // Remove e retorna o paciente no início da fila
+// -----------------------------------------------------------------------------
 Paciente* Fila::desenfileira() {
     if (filaVazia()) {
         return NULL; // Retorna NULL se a fila estiver vazia
@@ -40,6 +58,8 @@ Paciente* Fila::desenfileira() {
     // Remove o nodo do início da fila
     Nodo* nodoRemovido = inicio;
     Paciente* pacienteRemovido = nodoRemovido->paciente;
+
+    // Avança o início
     inicio = inicio->proximo;
 
     // Se o início for NULL após a remoção, a fila está vazia
@@ -53,14 +73,18 @@ Paciente* Fila::desenfileira() {
     return pacienteRemovido;
 }
 
-// FilaVazia
+// -----------------------------------------------------------------------------
+// 4. FilaVazia
 // Retorna true se a fila estiver vazia, false caso contrário
+// -----------------------------------------------------------------------------
 bool Fila::filaVazia() const {
-    return inicio == NULL;
+    return (inicio == NULL);
 }
 
-// Finaliza
-// Libera todos os nodos da fila
+// -----------------------------------------------------------------------------
+// 5. Finaliza
+// Libera todos os nós da fila, desenfileirando até ficar vazia
+// -----------------------------------------------------------------------------
 void Fila::finaliza() {
     while (!filaVazia()) {
         desenfileira(); // Remove cada nodo

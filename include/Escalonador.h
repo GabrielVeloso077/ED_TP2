@@ -1,42 +1,53 @@
 #ifndef ESCALONADOR_H
 #define ESCALONADOR_H
 
-#include "Paciente.h"
+#include "Paciente.h"  // Caso precise de definição de Paciente
+// ou #include <whatever> se o struct Evento estiver em outro lugar
 
-// Estrutura para representar um evento no escalonador
+// Defina a capacidade máxima do heap (ex.: 10000)
+#define CAPACIDADE_MAXIMA 10000
+
+// Estrutura que representa um evento
 struct Evento {
-    double tempoOcorrencia; // Tempo do evento
-    int tipoEvento;         // Tipo do evento
-    Paciente* paciente;     // Ponteiro para o paciente associado ao evento
-    void* dadosExtras;      // Dados extras opcionais
+    double tempoOcorrencia;
+    int tipoEvento;
+    Paciente* paciente;
+    void* dadosExtras;
+
+    // Campo adicional para manter estabilidade (ordem de inserção)
+    long long eventId; 
 };
 
-// Classe Escalonador que implementa um min-heap manual
 class Escalonador {
 private:
-    static const int CAPACIDADE_MAXIMA = 10000; // Tamanho máximo do heap
-    Evento heap[CAPACIDADE_MAXIMA];            // Array fixo de eventos
-    int tamHeap;                               // Tamanho atual do heap
+    // Array estático de eventos
+    Evento heap[CAPACIDADE_MAXIMA];
 
-    // Métodos auxiliares para manipulação do heap
+    int tamHeap;           // Quantos elementos há no heap
+    long long nextEventId; // Contador para atribuir eventId incremental
+
+    // Métodos auxiliares de heap
     void heapifyUp(int indice);
     void heapifyDown(int indice);
+
+    // Função de comparação: define a prioridade de cada Evento
+    bool menorQue(const Evento& a, const Evento& b);
 
 public:
     // Construtor
     Escalonador();
 
-    // Insere um novo evento no heap
+    // InsereEvento
     void insereEvento(const Evento& e);
 
-    // Retira o próximo evento (com menor tempo de ocorrência) do heap
+    // RetiraProximoEvento
     Evento retiraProximoEvento();
 
-    // Verifica se o heap está vazio
-    bool estaVazio() const;
+    // Verifica se está vazio
+    bool estaVazio() const { return (tamHeap == 0); }
 
-    // Finaliza o escalonador (reseta o heap)
-    void finaliza();
+    // Finaliza (pode zerar tamHeap)
+    void finaliza() { tamHeap = 0; }
 };
 
-#endif // ESCALONADOR_H
+#endif

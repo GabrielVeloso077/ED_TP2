@@ -1,107 +1,110 @@
 #include "Escalonador.h"
+#include <cstdio>  // se precisar de printf ou algo similar
 
 // Construtor
-// Inicializa o tamanho do heap como 0
-Escalonador::Escalonador() : tamHeap(0) {}
+Escalonador::Escalonador() : tamHeap(0), nextEventId(0) {
+    // nada adicional
+}
 
-// heapifyUp
-// Move o elemento na posição indicada para cima até restaurar a propriedade do heap
+// Função de comparação do min-heap (somente tempoOcorrencia + ordem de inserção)
+bool Escalonador::menorQue(const Evento& a, const Evento& b) {
+    // 1) Menor tempoOcorrencia tem prioridade
+    if (a.tempoOcorrencia < b.tempoOcorrencia) return true;
+    if (a.tempoOcorrencia > b.tempoOcorrencia) return false;
+
+    // 2) Se empatar o tempo, quem tiver eventId menor foi inserido primeiro -> prioridade
+    return (a.eventId < b.eventId);
+}
+
+// ------------------------------------------------------------------------
+// Sobe o elemento 'indice' até restaurar a propriedade do min-heap
 void Escalonador::heapifyUp(int indice) {
     while (indice > 0) {
-        int pai = (indice - 1) / 2; // Índice do pai
+        int pai = (indice - 1) / 2;
 
-        // Se o tempo do evento atual for menor que o do pai, troca
-        if (heap[indice].tempoOcorrencia < heap[pai].tempoOcorrencia) {
+        if (menorQue(heap[indice], heap[pai])) {
+            // troca
             Evento temp = heap[indice];
             heap[indice] = heap[pai];
             heap[pai] = temp;
 
-            // Atualiza o índice para continuar subindo
             indice = pai;
         } else {
-            break; // Propriedade do heap satisfeita
+            break;
         }
     }
 }
 
-// heapifyDown
-// Move o elemento na posição indicada para baixo até restaurar a propriedade do heap
+// ------------------------------------------------------------------------
+// Desce o elemento 'indice' até restaurar a propriedade do min-heap
 void Escalonador::heapifyDown(int indice) {
-    while (true) {
+    while(true) {
         int menor = indice;
-        int filhoEsquerda = 2 * indice + 1;
-        int filhoDireita = 2 * indice + 2;
+        int esq = 2 * indice + 1;
+        int dir = 2 * indice + 2;
 
-        // Verifica se o filho esquerdo é menor que o atual
-        if (filhoEsquerda < tamHeap && heap[filhoEsquerda].tempoOcorrencia < heap[menor].tempoOcorrencia) {
-            menor = filhoEsquerda;
+        if (esq < tamHeap && menorQue(heap[esq], heap[menor])) {
+            menor = esq;
+        }
+        if (dir < tamHeap && menorQue(heap[dir], heap[menor])) {
+            menor = dir;
         }
 
-        // Verifica se o filho direito é menor que o menor encontrado
-        if (filhoDireita < tamHeap && heap[filhoDireita].tempoOcorrencia < heap[menor].tempoOcorrencia) {
-            menor = filhoDireita;
-        }
-
-        // Se o menor não for o índice atual, troca
         if (menor != indice) {
             Evento temp = heap[indice];
             heap[indice] = heap[menor];
             heap[menor] = temp;
-
-            // Atualiza o índice para continuar descendo
             indice = menor;
         } else {
-            break; // Propriedade do heap satisfeita
+            break;
         }
     }
 }
 
-// InsereEvento
-// Adiciona um novo evento ao heap e ajusta a estrutura
+// ------------------------------------------------------------------------
+// Insere um evento no heap
 void Escalonador::insereEvento(const Evento& e) {
     if (tamHeap >= CAPACIDADE_MAXIMA) {
-        return; // Heap está cheio
+        // Heap cheio!
+        // Pode imprimir erro ou descartar
+        printf("[Escalonador] ERRO: heap cheio!\n");
+        return;
     }
 
-    // Adiciona o evento ao final do heap
-    heap[tamHeap] = e;
+    // Copiar o evento e atribuir eventId incremental
+    Evento novo = e;
+    novo.eventId = nextEventId++;
 
-    // Realiza heapify up para manter a propriedade do heap
+    // Insere no final e ajusta
+    heap[tamHeap] = novo;
     heapifyUp(tamHeap);
 
-    // Incrementa o tamanho do heap
     tamHeap++;
 }
 
-// RetiraProximoEvento
-// Remove e retorna o evento com o menor tempo de ocorrência
+// ------------------------------------------------------------------------
+// Retira o evento de menor tempo (ou se igual, primeiro inserido)
 Evento Escalonador::retiraProximoEvento() {
     if (estaVazio()) {
-        return Evento{0, 0, NULL, NULL}; // Retorna um evento vazio se o heap estiver vazio
+        // Retorna um evento "vazio"
+        Evento ev;
+        ev.tempoOcorrencia = 0.0;
+        ev.tipoEvento = 0;
+        ev.paciente = nullptr;
+        ev.dadosExtras = nullptr;
+        ev.eventId = -1; 
+        return ev;
     }
 
-    // O menor evento é a raiz do heap
-    Evento menorEvento = heap[0];
+    // O menor está na raiz (heap[0])
+    Evento menor = heap[0];
 
-    // Substitui a raiz pelo último elemento
+    // Substituir pela última posição
     heap[0] = heap[tamHeap - 1];
-
-    // Reduz o tamanho do heap
     tamHeap--;
 
-    // Realiza heapify down para restaurar a propriedade do heap
+    // Reajustar
     heapifyDown(0);
 
-    return menorEvento;
-}
-
-// Verifica se o heap está vazio
-bool Escalonador::estaVazio() const {
-    return tamHeap == 0;
-}
-
-// Finaliza
-// Reseta o escalonador, limpando o heap
-void Escalonador::finaliza() {
-    tamHeap = 0; // Apenas zera o tamanho do heap
+    return menor;
 }
