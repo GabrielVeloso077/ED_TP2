@@ -1,53 +1,39 @@
+// Escalonador.h
 #ifndef ESCALONADOR_H
 #define ESCALONADOR_H
 
-#include "Paciente.h"  // Caso precise de definição de Paciente
-// ou #include <whatever> se o struct Evento estiver em outro lugar
+#include "Paciente.h"  // Necessário se Evento usa Paciente*
+#include <cstdio>      // Para printf
 
-// Defina a capacidade máxima do heap (ex.: 10000)
-#define CAPACIDADE_MAXIMA 10000
+static const int CAPACIDADE_MAXIMA = 100000;
 
-// Estrutura que representa um evento
 struct Evento {
-    double tempoOcorrencia;
-    int tipoEvento;
-    Paciente* paciente;
-    void* dadosExtras;
-
-    // Campo adicional para manter estabilidade (ordem de inserção)
-    long long eventId; 
+    double tempoOcorrencia;  // Quando o evento ocorre
+    int    tipoEvento;       // Tipo do evento
+    Paciente* paciente;      // Ponteiro para o paciente
+    void* dadosExtras;       // Dados extras, se necessário
+    int eventId;             // ID do evento para desempate
 };
 
 class Escalonador {
 private:
-    // Array estático de eventos
     Evento heap[CAPACIDADE_MAXIMA];
+    int tamHeap;
+    int nextEventId; // Próximo ID para eventos
 
-    int tamHeap;           // Quantos elementos há no heap
-    long long nextEventId; // Contador para atribuir eventId incremental
+    // Compara somente tempoOcorrencia e eventId
+    bool menorQue(const Evento& a, const Evento& b);
 
-    // Métodos auxiliares de heap
     void heapifyUp(int indice);
     void heapifyDown(int indice);
 
-    // Função de comparação: define a prioridade de cada Evento
-    bool menorQue(const Evento& a, const Evento& b);
-
 public:
-    // Construtor
     Escalonador();
 
-    // InsereEvento
     void insereEvento(const Evento& e);
-
-    // RetiraProximoEvento
     Evento retiraProximoEvento();
-
-    // Verifica se está vazio
-    bool estaVazio() const { return (tamHeap == 0); }
-
-    // Finaliza (pode zerar tamHeap)
-    void finaliza() { tamHeap = 0; }
+    bool estaVazio() const;
+    void finaliza();
 };
 
 #endif

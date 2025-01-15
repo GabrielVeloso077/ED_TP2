@@ -1,6 +1,9 @@
 #include "Paciente.h"
 #include <cstring>
 #include <ctime>
+#include <cmath> // Necessário para round
+
+using namespace std; // Evita a necessidade de usar 'std::' antes das funções
 
 // -----------------------------------------------------------------------------
 // Função auxiliar para calcular a "hora do dia" em formato double, considerando

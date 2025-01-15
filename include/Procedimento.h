@@ -25,7 +25,7 @@ public:
 
     // Método para alocar unidade
     // Encontra uma unidade livre e calcula o término do procedimento
-    double alocarUnidade(double tempoAtual);
+    double alocarUnidade(double tempoAtual, double Quantidade);
 
     // (Opcional) Método para liberar unidade
     void liberarUnidade(int index);
