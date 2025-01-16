@@ -1,4 +1,4 @@
-#include "Escalonador.h"
+/*#include "Escalonador.h"
 
 // Construtor
 Escalonador::Escalonador() : tamHeap(0), nextEventId(0) {
@@ -121,9 +121,9 @@ void Escalonador::finaliza() {
     tamHeap = 0;
     nextEventId = 0; // Opcional: reinicia o ID
 }
+*/
 
-
-/*#include "Escalonador.h"
+#include "Escalonador.h"
 #include <cstdio>  // se precisar de printf ou algo similar
 
 // Construtor
@@ -233,4 +233,14 @@ Evento Escalonador::retiraProximoEvento() {
 
     return menor;
 }
-*/
+// Verifica se o heap está vazio
+bool Escalonador::estaVazio() const {
+    return tamHeap == 0;
+}
+
+// ------------------------------------------------------------------------
+// Reseta o escalonador, limpando o heap
+void Escalonador::finaliza() {
+    tamHeap = 0;
+    nextEventId = 0; // Opcional: reinicia o ID
+}

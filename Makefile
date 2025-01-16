@@ -9,7 +9,7 @@ CXX = g++
 CXXFLAGS = -Wall -I$(INC_DIR)
 
 # Nome do executável
-TARGET = $(BIN_DIR)/TP2.out
+TARGET = $(BIN_DIR)/tp2.out
 
 # Encontrar todos os arquivos fonte
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)

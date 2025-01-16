@@ -67,37 +67,37 @@ double Procedimento::alocarUnidade(double tempoAtual, double Quantidade)
             tempoOcupadoAte[u] = tempoFim;
 
             // Log de depuração (unidade alocada)
-            printf("[Procedimento] Alocado na UNIDADE %d (livre) em t=%.2f; "
-                   "ficará ocupada até %.2f\n",
-                   u, tempoAtual, tempoFim);
+            // printf("[Procedimento] Alocado na UNIDADE %d (livre) em t=%.2f; "
+            //        "ficará ocupada até %.2f\n",
+            //        u, tempoAtual, tempoFim);
 
             // Mostra o status de todas as unidades
-            printf("  >> STATUS de TODAS as unidades:\n");
-            for (int k = 0; k < numeroUnidades; k++)
-            {
-                if (tempoAtual >= tempoOcupadoAte[k])
-                {
-                    printf("     - Unidade %d livre\n", k);
-                }
-                else
-                {
-                    printf("     - Unidade %d ocupada até %.2f\n", k, tempoOcupadoAte[k]);
-                }
-            }
-            printf("\n");
+            // printf("  >> STATUS de TODAS as unidades:\n");
+            // for (int k = 0; k < numeroUnidades; k++)
+            // {
+            //     if (tempoAtual >= tempoOcupadoAte[k])
+            //     {
+            //         printf("     - Unidade %d livre\n", k);
+            //     }
+            //     else
+            //     {
+            //         printf("     - Unidade %d ocupada até %.2f\n", k, tempoOcupadoAte[k]);
+            //     }
+            // }
+            // printf("\n");
 
             return tempoFim;
         }
     }
 
     // Se não encontrou nenhuma unidade livre (tempoOcupadoAte[u] > tempoAtual para todas)
-    printf("[Procedimento] NENHUMA UNIDADE livre em t=%.2f!\n", tempoAtual);
-    printf("  >> STATUS de TODAS as unidades:\n");
-    for (int k = 0; k < numeroUnidades; k++)
-    {
-        printf("     - Unidade %d ocupada até %.2f\n", k, tempoOcupadoAte[k]);
-    }
-    printf("\n");
+    // printf("[Procedimento] NENHUMA UNIDADE livre em t=%.2f!\n", tempoAtual);
+    // printf("  >> STATUS de TODAS as unidades:\n");
+    // for (int k = 0; k < numeroUnidades; k++)
+    // {
+    //     printf("     - Unidade %d ocupada até %.2f\n", k, tempoOcupadoAte[k]);
+    // }
+    // printf("\n");
 
     return -1.0;
 }
@@ -110,4 +110,52 @@ void Procedimento::liberarUnidade(int index)
     {
         tempoOcupadoAte[index] = 0.0; // Define como livre
     }
+}
+
+bool Procedimento::temUnidadeLivre(double tempoAtual)
+{
+    // Vamos tentar encontrar a primeira unidade livre
+    for (int u = 0; u < numeroUnidades; u++)
+    {
+        // Verifica se a unidade u está livre no instante 'tempoAtual'
+        if (tempoOcupadoAte[u] <= tempoAtual)
+        {
+            // Achamos uma unidade livre.
+            // Esse procedimento vai ocupar a unidade até (tempoAtual + tempoMedio)
+            // double tempoFim = tempoAtual + (tempoMedio * Quantidade);
+            // tempoOcupadoAte[u] = tempoFim;
+
+            // Log de depuração (unidade alocada)
+            // printf("[Procedimento] Alocado na UNIDADE %d (livre) em t=%.2f;\n",
+            //        u, tempoAtual);
+
+            // Mostra o status de todas as unidades
+            // printf("  >> STATUS de TODAS as unidades:\n");
+            // for (int k = 0; k < numeroUnidades; k++)
+            // {
+            //     if (tempoAtual >= tempoOcupadoAte[k])
+            //     {
+            //         printf("     - Unidade %d livre\n", k);
+            //     }
+            //     else
+            //     {
+            //         printf("     - Unidade %d ocupada até %.2f\n", k, tempoOcupadoAte[k]);
+            //     }
+            // }
+            // printf("\n");
+
+            return true;
+        }
+    }
+
+    // Se não encontrou nenhuma unidade livre (tempoOcupadoAte[u] > tempoAtual para todas)
+    // printf("[Procedimento] NENHUMA UNIDADE livre em t=%.2f!\n", tempoAtual);
+    // printf("  >> STATUS de TODAS as unidades:\n");
+    // for (int k = 0; k < numeroUnidades; k++)
+    // {
+    //     printf("     - Unidade %d ocupada até %.2f\n", k, tempoOcupadoAte[k]);
+    // }
+    // printf("\n");
+
+    return false;
 }

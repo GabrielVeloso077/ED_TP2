@@ -1,156 +1,0 @@
-Script started on 2025-01-08 16:14:23-03:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="238" LINES="8"]
-[?2004h]0;root@L-MT009: /mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2root@L-MT009:/mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2# exitcd binmake all[2Pcd bin[2Pexit[Kexitcd binmake allclean[5Pcd ..script teste123[9Pcd binscript teste123[9Pcd binmake allclean[2Pallclean[5Pcd ..script teste123[9Pcd binmake allclean[2Pallclean[2Pallclean[2Pallclean[2Pallclean[2Pallclean[2Pallclean[2Pallclean[5Pcd ..script teste2345[10Pcd binmake allclean[5Pcd ..script teste234[9Pcd binmake allclean[6Pexit./tp2.out teste.csvcd bin[Kmake allclean[5Pcd .../tp2.out teste.csvcd bin[Kmake allclean[5Pcd .../tp2.out teste.csvexit[K./tp2.out teste.csvexit[K./tp2.out teste.csvexit[K./tp2.out teste.csvcd bin[Kmake allclean[5Pcd .../main < input.txt3[K[2Pcd binmake allclean[5Pcd .../main 3[2Pcd binpa8./maincd binmake all[2Pcd PA8[2Pexitpip show openai[1Popenai migrateexit[Kpython manage.py migratetouch core/templates/core/index.html[8Pmkdir -p core/templates/core[10Ptouch core/urls.py0[K1./pa7.out [4Pcd binmake allclean[5Pcd .../pa7.out -knd[6Pcd binmake allclean[5Pcd .../pa7.out -d[6Pcd binmake allcleanMAKE CLEAN[2Pmake allclean[2Pallclean[2Pall[Kall./tp1.out cad.r5000.p5000.xcsvcd bin[Kmake allclean[5Pcd ..allgrind_annotate callgrind.out.5477>analys.txt[Kvalgrind --tool=callgrind ./tp1.out cad.r5000.p5000.xcsv[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kcd bin
-[?2004l[?2004h]0;root@L-MT009: /mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/binroot@L-MT009:/mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/bin# cd bin[2Pexitcd binmake allclean[5Pcd ..script teste123[9Pcd binscript teste123[9Pcd binmake allclean[2Pallclean[5Pcd ..make clean[2Pallclean[2Pall[2Pcd binscript teste123[10Pcd ..make clean[2Pall[2Pcd bin[2Pexitcd bin[K./tp1[K2.out teste.csv
-[?2004lLendo os procedimentos...
-Procedimento 0: tempo=0.20, unidades=2
-Procedimento 1: tempo=0.50, unidades=2
-Procedimento 2: tempo=0.10, unidades=2
-Procedimento 3: tempo=0.05, unidades=2
-Procedimento 4: tempo=0.50, unidades=2
-Procedimento 5: tempo=0.05, unidades=2
-Número de pacientes: 10
-[readPacientes] Pac 0009600008: urg=1, mh=5, ts=43, ex=2, inst=110
-[readPacientes] Escalonando CHEGADA p/ 0009600008, t=2.00
-[readPacientes] Pac 0009600009: urg=0, mh=3, ts=1, ex=5, inst=21
-[readPacientes] Escalonando CHEGADA p/ 0009600009, t=2.00
-[readPacientes] Pac 0009600010: urg=1, mh=3, ts=4, ex=2, inst=8
-[readPacientes] Escalonando CHEGADA p/ 0009600010, t=2.00
-[readPacientes] Pac 0009600011: urg=2, mh=15, ts=28, ex=4, inst=68
-[readPacientes] Escalonando CHEGADA p/ 0009600011, t=2.00
-[readPacientes] Pac 0009600012: urg=0, mh=3, ts=2, ex=7, inst=9
-[readPacientes] Escalonando CHEGADA p/ 0009600012, t=2.00
-[readPacientes] Pac 0009600013: urg=0, mh=2, ts=2, ex=2, inst=8
-[readPacientes] Escalonando CHEGADA p/ 0009600013, t=3.00
-[readPacientes] Pac 0009600015: urg=0, mh=1, ts=3, ex=1, inst=4
-[readPacientes] Escalonando CHEGADA p/ 0009600015, t=3.00
-[readPacientes] Pac 0009600016: urg=2, mh=5, ts=14, ex=1, inst=28
-[readPacientes] Escalonando CHEGADA p/ 0009600016, t=3.00
-[readPacientes] Pac 0009600017: urg=0, mh=1, ts=0, ex=0, inst=0
-[readPacientes] Escalonando CHEGADA p/ 0009600017, t=4.00
-[readPacientes] Pac 0009600018: urg=1, mh=2, ts=8, ex=3, inst=11
-[readPacientes] Escalonando CHEGADA p/ 0009600018, t=4.00
-[runSim] Pac 0009600008 CHEGOU => proc=0, urg=1, t=2.00
-[processarFilas] Pac 0009600008 urg=1 no proc=0 c/1 repet, fim=2.20, espera=0.00
-[runSim] Pac 0009600009 CHEGOU => proc=0, urg=0, t=2.00
-[processarFilas] Pac 0009600009 urg=0 no proc=0 c/1 repet, fim=2.20, espera=0.00
-[runSim] Pac 0009600011 CHEGOU => proc=0, urg=2, t=2.00
-[runSim] Pac 0009600012 CHEGOU => proc=0, urg=0, t=2.00
-[runSim] Pac 0009600010 CHEGOU => proc=0, urg=1, t=2.00
-[runSim] Pac 0009600009 => Atendimento(1)
-[processarFilas] Pac 0009600011 urg=2 no proc=0 c/1 repet, fim=2.40, espera=0.20
-[processarFilas] Pac 0009600010 urg=1 no proc=0 c/1 repet, fim=2.40, espera=0.20
-[processarFilas] Pac 0009600009 urg=0 no proc=1 c/1 repet, fim=2.70, espera=0.00
-[runSim] Pac 0009600008 => Atendimento(1)
-[processarFilas] Pac 0009600008 urg=1 no proc=1 c/1 repet, fim=2.70, espera=0.00
-[runSim] Pac 0009600010 => Atendimento(1)
-[processarFilas] Pac 0009600012 urg=0 no proc=0 c/1 repet, fim=2.60, espera=0.20
-[runSim] Pac 0009600011 => Atendimento(1)
-[runSim] Pac 0009600012 => Atendimento(1)
-[runSim] Pac 0009600008 => Medidas(2)
-[processarFilas] Pac 0009600011 urg=2 no proc=1 c/1 repet, fim=3.20, espera=0.10
-[processarFilas] Pac 0009600010 urg=1 no proc=1 c/1 repet, fim=3.20, espera=0.10
-[processarFilas] Pac 0009600008 urg=1 no proc=2 c/5 repet, fim=3.20, espera=0.00
-[runSim] Pac 0009600009 => Medidas(2)
-[processarFilas] Pac 0009600009 urg=0 no proc=2 c/3 repet, fim=3.00, espera=0.00
-[runSim] Pac 0009600013 CHEGOU => proc=0, urg=0, t=3.00
-[processarFilas] Pac 0009600013 urg=0 no proc=0 c/1 repet, fim=3.20, espera=0.00
-[runSim] Pac 0009600016 CHEGOU => proc=0, urg=2, t=3.00
-[processarFilas] Pac 0009600016 urg=2 no proc=0 c/1 repet, fim=3.20, espera=0.00
-[runSim] Pac 0009600009 => Testes(3)
-[processarFilas] Pac 0009600009 urg=0 no proc=3 c/1 repet, fim=3.05, espera=0.00
-[runSim] Pac 0009600015 CHEGOU => proc=0, urg=0, t=3.00
-[runSim] Pac 0009600009 => Exames(4)
-[processarFilas] Pac 0009600009 urg=0 no proc=4 c/5 repet, fim=5.55, espera=0.00
-[runSim] Pac 0009600010 => Medidas(2)
-[processarFilas] Pac 0009600015 urg=0 no proc=0 c/1 repet, fim=3.40, espera=0.15
-[processarFilas] Pac 0009600012 urg=0 no proc=1 c/1 repet, fim=3.70, espera=0.15
-[processarFilas] Pac 0009600010 urg=1 no proc=2 c/3 repet, fim=3.50, espera=0.00
-[runSim] Pac 0009600008 => Testes(3)
-[processarFilas] Pac 0009600008 urg=1 no proc=3 c/43 repet, fim=5.35, espera=0.00
-[runSim] Pac 0009600013 => Atendimento(1)
-[processarFilas] Pac 0009600013 urg=0 no proc=1 c/1 repet, fim=3.70, espera=0.00
-[runSim] Pac 0009600016 => Atendimento(1)
-[runSim] Pac 0009600011 => Medidas(2)
-[processarFilas] Pac 0009600011 urg=2 no proc=2 c/15 repet, fim=4.70, espera=0.00
-[runSim] Pac 0009600015 => Atendimento(1)
-[runSim] Pac 0009600010 => Testes(3)
-[processarFilas] Pac 0009600010 urg=1 no proc=3 c/4 repet, fim=3.70, espera=0.00
-[runSim] Pac 0009600012 => Medidas(2)
-[processarFilas] Pac 0009600016 urg=2 no proc=1 c/1 repet, fim=4.20, espera=0.20
-[processarFilas] Pac 0009600015 urg=0 no proc=1 c/1 repet, fim=4.20, espera=0.20
-[processarFilas] Pac 0009600012 urg=0 no proc=2 c/3 repet, fim=4.00, espera=0.00
-[runSim] Pac 0009600010 => Exames(4)
-[processarFilas] Pac 0009600010 urg=1 no proc=4 c/2 repet, fim=4.70, espera=0.00
-[runSim] Pac 0009600013 => Alta Imediata!
-[runSim] Pac 0009600018 CHEGOU => proc=0, urg=1, t=4.00
-[processarFilas] Pac 0009600018 urg=1 no proc=0 c/1 repet, fim=4.20, espera=0.00
-[runSim] Pac 0009600012 => Testes(3)
-[processarFilas] Pac 0009600012 urg=0 no proc=3 c/2 repet, fim=4.10, espera=0.00
-[runSim] Pac 0009600017 CHEGOU => proc=0, urg=0, t=4.00
-[processarFilas] Pac 0009600017 urg=0 no proc=0 c/1 repet, fim=4.20, espera=0.00
-[runSim] Pac 0009600012 => Exames(4)
-[processarFilas] Pac 0009600012 urg=0 no proc=4 c/7 repet, fim=7.60, espera=0.00
-[runSim] Pac 0009600017 => Atendimento(1)
-[processarFilas] Pac 0009600017 urg=0 no proc=1 c/1 repet, fim=4.70, espera=0.00
-[runSim] Pac 0009600016 => Medidas(2)
-[processarFilas] Pac 0009600016 urg=2 no proc=2 c/5 repet, fim=4.70, espera=0.00
-[runSim] Pac 0009600015 => Alta Imediata!
-[runSim] Pac 0009600018 => Atendimento(1)
-[processarFilas] Pac 0009600018 urg=1 no proc=1 c/1 repet, fim=4.70, espera=0.00
-[runSim] Pac 0009600017 => Alta Imediata!
-[runSim] Pac 0009600011 => Testes(3)
-[processarFilas] Pac 0009600011 urg=2 no proc=3 c/28 repet, fim=6.10, espera=0.00
-[runSim] Pac 0009600018 => Medidas(2)
-[processarFilas] Pac 0009600018 urg=1 no proc=2 c/2 repet, fim=4.90, espera=0.00
-[runSim] Pac 0009600010 => Instrumentos(5)
-[processarFilas] Pac 0009600010 urg=1 no proc=5 c/8 repet, fim=5.10, espera=0.00
-[runSim] Pac 0009600016 => Testes(3)
-[processarFilas] Pac 0009600016 urg=2 no proc=3 c/14 repet, fim=5.40, espera=0.00
-[runSim] Pac 0009600018 => Testes(3)
-[processarFilas] Pac 0009600018 urg=1 no proc=3 c/8 repet, fim=5.30, espera=0.00
-[runSim] Pac 0009600010 => Alta final!
-[runSim] Pac 0009600018 => Exames(4)
-[processarFilas] Pac 0009600018 urg=1 no proc=4 c/3 repet, fim=6.80, espera=0.00
-[runSim] Pac 0009600008 => Exames(4)
-[processarFilas] Pac 0009600008 urg=1 no proc=4 c/2 repet, fim=6.35, espera=0.00
-[runSim] Pac 0009600016 => Exames(4)
-[runSim] Pac 0009600009 => Instrumentos(5)
-[processarFilas] Pac 0009600009 urg=0 no proc=5 c/21 repet, fim=6.60, espera=0.00
-[runSim] Pac 0009600011 => Exames(4)
-[processarFilas] Pac 0009600016 urg=2 no proc=4 c/1 repet, fim=6.60, espera=0.55
-[processarFilas] Pac 0009600011 urg=2 no proc=4 c/4 repet, fim=8.10, espera=0.00
-[runSim] Pac 0009600008 => Instrumentos(5)
-[processarFilas] Pac 0009600008 urg=1 no proc=5 c/110 repet, fim=11.85, espera=0.00
-[runSim] Pac 0009600009 => Alta final!
-[runSim] Pac 0009600016 => Instrumentos(5)
-[processarFilas] Pac 0009600016 urg=2 no proc=5 c/28 repet, fim=8.00, espera=0.00
-[runSim] Pac 0009600018 => Instrumentos(5)
-[processarFilas] Pac 0009600018 urg=1 no proc=5 c/11 repet, fim=7.35, espera=0.00
-[runSim] Pac 0009600018 => Alta final!
-[runSim] Pac 0009600012 => Instrumentos(5)
-[processarFilas] Pac 0009600012 urg=0 no proc=5 c/9 repet, fim=8.05, espera=0.00
-[runSim] Pac 0009600016 => Alta final!
-[runSim] Pac 0009600012 => Alta final!
-[runSim] Pac 0009600011 => Instrumentos(5)
-[processarFilas] Pac 0009600011 urg=2 no proc=5 c/68 repet, fim=11.50, espera=0.00
-[runSim] Pac 0009600011 => Alta final!
-[runSim] Pac 0009600008 => Alta final!
-
-==========
-Resultados da simulação:
-0009600008 Tue Mar 21 02:00:00 2017 Tue Mar 21 11:51:00 2017 TOT=9.85 AT=9.85 ESP=0.00
-0009600009 Tue Mar 21 02:00:00 2017 Tue Mar 21 06:36:00 2017 TOT=4.60 AT=4.60 ESP=0.00
-0009600010 Tue Mar 21 02:00:00 2017 Tue Mar 21 04:54:00 2017 TOT=2.90 AT=2.60 ESP=0.30
-0009600011 Tue Mar 21 02:00:00 2017 Tue Mar 21 11:18:00 2017 TOT=9.30 AT=9.00 ESP=0.30
-0009600012 Tue Mar 21 02:00:00 2017 Tue Mar 21 07:24:00 2017 TOT=5.40 AT=5.05 ESP=0.35
-0009600013 Tue Mar 21 03:00:00 2017 Tue Mar 21 03:42:00 2017 TOT=0.70 AT=0.70 ESP=0.00
-0009600015 Tue Mar 21 03:00:00 2017 Tue Mar 21 04:03:00 2017 TOT=1.05 AT=0.70 ESP=0.35
-0009600016 Tue Mar 21 03:00:00 2017 Tue Mar 21 07:33:00 2017 TOT=4.55 AT=3.80 ESP=0.75
-0009600017 Tue Mar 21 04:00:00 2017 Tue Mar 21 04:42:00 2017 TOT=0.70 AT=0.70 ESP=0.00
-0009600018 Tue Mar 21 04:00:00 2017 Tue Mar 21 07:20:59 2017 TOT=3.35 AT=3.35 ESP=0.00
-
-Finalizando a simulação...
-[?2004h]0;root@L-MT009: /mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/binroot@L-MT009:/mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/bin# [K]0;root@L-MT009: /mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/binroot@L-MT009:/mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/bin# [K]0;root@L-MT009: /mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/binroot@L-MT009:/mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/bin# [K]0;root@L-MT009: /mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/binroot@L-MT009:/mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/bin# [K]0;root@L-MT009: /mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/binroot@L-MT009:/mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/bin# [K]0;root@L-MT009: /mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/binroot@L-MT009:/mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/bin# [K]0;root@L-MT009: /mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/binroot@L-MT009:/mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/bin# [K]0;root@L-MT009: /mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/binroot@L-MT009:/mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/bin# [K]0;root@L-MT009: /mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/binroot@L-MT009:/mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/bin# [K]0;root@L-MT009: /mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/binroot@L-MT009:/mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/bin# [K]0;root@L-MT009: /mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/binroot@L-MT009:/mnt/c/Users/gabriel.veloso/Desktop/ED/ed_tp2/bin# cd [K[K[Kexit
-[?2004lexit
-
-Script done on 2025-01-08 16:16:52-03:00 [COMMAND_EXIT_CODE="0"]
