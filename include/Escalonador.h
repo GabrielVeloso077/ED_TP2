@@ -5,7 +5,7 @@
 #include "Paciente.h"  // Necessário se Evento usa Paciente*
 #include <cstdio>      // Para printf
 
-static const int CAPACIDADE_MAXIMA = 100000;
+static const int CAPACIDADE_MAXIMA = 1000000;
 
 struct Evento {
     double tempoOcorrencia;  // Quando o evento ocorre

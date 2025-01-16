@@ -1,0 +1,10 @@
+Script started on 2025-01-16 12:49:39-03:00 [TERM="xterm-256color" TTY="/dev/pts/4" COLUMNS="221" LINES="18"]
+[?2004h]0;root@L-MT009: /mnt/c/Users/gabriel.veloso/Desktop/ED/ED_TP2/binroot@L-MT009:/mnt/c/Users/gabriel.veloso/Desktop/ED/ED_TP2/bin# script aas[4Pcd bin[1P.../tp2.out exemplo3.csv
+[?2004lLendo os procedimentos...
+Procedimento 0: tempo=0.80, unidades=1
+Procedimento 1: tempo=0.40, unidades=1
+Procedimento 2: tempo=0.90, unidades=1
+Procedimento 3: tempo=0.50, unidades=1@L-MT009:/mnt/c/Users/gabriel.veloso/Desktop/ED/ED_TP2/bin# [K]0;root@L-MT009: /mnt/c/Users/gabriel.veloso/Desktop/ED/ED_TP2/binroot@L-MT009:/mnt/c/Users/gabriel.veloso/Desktop/ED/ED_TP2/bin# [K]0;root@L-MT009: /mnt/c/Users/gabriel.veloso/Desktop/ED/ED_TP2/binroot@L-MT009:/mnt/c/Users/gabriel.veloso/Desktop/ED/ED_TP2/bin# [?2004l
+exit
+
+Script done on 2025-01-16 13:00:36-03:00 [COMMAND_EXIT_CODE="0"]

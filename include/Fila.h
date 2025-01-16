@@ -2,7 +2,7 @@
 #define FILA_H
 
 #include "Paciente.h"
-
+#include <cstdio>      // Para printf
 /**
  * @class Fila
  * @brief Representa uma fila para gerenciar pacientes em um hospital.
@@ -69,6 +69,14 @@ public:
      * Remove todos os pacientes da fila, garantindo que nenhum nó seja deixado na memória.
      */
     void finaliza();
+
+    /**
+     * @brief Retorna o paciente próximo da fila.
+     * @return Retorna o paciente próximo da fila.
+     */
+    int proximoDaFilaId() const;
+
+    void printAll() const;
 };
 
 #endif // FILA_H

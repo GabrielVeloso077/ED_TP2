@@ -90,3 +90,29 @@ void Fila::finaliza() {
         desenfileira(); // Remove cada nodo
     }
 }
+
+// Retorna o paciente do início da fila, sem removê-lo.
+// Se a fila estiver vazia, retorna NULL.
+int Fila::proximoDaFilaId() const {
+    if (filaVazia()) {
+        return -1; // ou outro valor-sentinela
+    }
+    return inicio->paciente->getId();
+}
+
+void Fila::printAll() const {
+    if (filaVazia()) {
+        printf("A fila está vazia.\n");
+        return;
+    }
+
+    Nodo* atual = inicio;
+    while (atual != NULL) {
+        // Exemplo: imprime apenas o ID do paciente
+        printf("Paciente ID=%d\n", atual->paciente->getId());
+        // Se quiser mais info, ex.: grau de urgência, estado atual, etc.
+        // printf("Grau Urg=%d\n", atual->paciente->getGrauUrgencia());
+
+        atual = atual->proximo;
+    }
+}

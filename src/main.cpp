@@ -14,7 +14,7 @@ using namespace std; // Evita a necessidade de usar 'std::' antes das funções
 
 // Constantes
 #define MAX_PROCEDIMENTOS 6
-#define MAX_PACIENTES 10000
+#define MAX_PACIENTES 1000000
 
 // Três filas por procedimento: 0=Verde, 1=Amarelo, 2=Vermelho
 #define NUM_PRIORIDADES 3
@@ -41,21 +41,19 @@ int numeroPacientes = 0;
 // ---------------------------------------------------------------------------
 void readProcedimentos(FILE *arquivo)
 {
-    // printf("Lendo os procedimentos...\n");
+    printf("Lendo os procedimentos...\n");
     for (int i = 0; i < MAX_PROCEDIMENTOS; i++)
     {
         double tempoMedio;
         int numUnidades;
         fscanf(arquivo, "%lf %d", &tempoMedio, &numUnidades);
         procedimentos[i] = new Procedimento(tempoMedio, numUnidades);
-        // printf("Procedimento %d: tempo=%.2f, unidades=%d\n", i, tempoMedio, numUnidades);
+        printf("Procedimento %d: tempo=%.2f, unidades=%d\n", i, tempoMedio, numUnidades);
     }
 }
 
-// (todas as impressões desta função comentadas)
 void printAllPatientsStatus()
 {
-    /*
     printf("\n======== STATUS DE TODOS OS PACIENTES ========\n");
     for (int i = 0; i < numeroPacientes; i++)
     {
@@ -74,23 +72,21 @@ void printAllPatientsStatus()
             p->getTempoTotal());
     }
     printf("==============================================\n");
-    */
 }
 
 // ---------------------------------------------------------------------------
 void readPacientes(FILE *arquivo)
 {
     fscanf(arquivo, "%d", &numeroPacientes);
-    // printf("Número de pacientes: %d\n", numeroPacientes);
+    printf("Número de pacientes: %d\n", numeroPacientes);
 
-    // Definimos nossa data/hora base (Jan 1 2020) para converter em "horas desde base".
     struct tm baseTm;
     memset(&baseTm, 0, sizeof(baseTm));
-    baseTm.tm_year = 2020 - 1900; // 2020 => 120
-    baseTm.tm_mon = 0;            // janeiro
-    baseTm.tm_mday = 1;           // dia 1
+    baseTm.tm_year = 2000 - 1900;
+    baseTm.tm_mon = 0;
+    baseTm.tm_mday = 1;
     baseTm.tm_hour = 0;
-    time_t tBase = mktime(&baseTm); // base absoluta
+    time_t tBase = mktime(&baseTm);
 
     for (int i = 0; i < numeroPacientes; i++)
     {
@@ -102,8 +98,8 @@ void readPacientes(FILE *arquivo)
                &id, &altaImediata, &ano, &mes, &dia, &hora,
                &grauUrg, &mh, &ts, &ex, &inst);
 
-        // printf("[readPacientes] Pac %d: urg=%d, mh=%d, ts=%d, ex=%d, inst=%d\n",
-        //       id, grauUrg, mh, ts, ex, inst);
+        printf("[readPacientes] Pac %d: urg=%d, mh=%d, ts=%d, ex=%d, inst=%d\n",
+               id, grauUrg, mh, ts, ex, inst);
 
         struct tm dataAd;
         memset(&dataAd, 0, sizeof(dataAd));
@@ -116,7 +112,7 @@ void readPacientes(FILE *arquivo)
 
         time_t tAdmissao = mktime(&dataAd);
         double diffSegs = difftime(tAdmissao, tBase);
-        double tch = diffSegs / 3600.0; // horas desde 1/1/2020
+        double tch = diffSegs / 3600.0;
 
         Paciente *p = new Paciente(
             id, altaImediata,
@@ -133,50 +129,45 @@ void readPacientes(FILE *arquivo)
 
         escalonador.insereEvento(ev);
 
-        // printf("[readPacientes] Escalonando CHEGADA p/ %d, t=%.2f\n", id, tch);
+        printf("[readPacientes] Escalonando CHEGADA p/ %d, t=%.2f\n", id, tch);
     }
 }
 
-// ---------------------------------------------------------------------------
-// processarFilas:
-//  - i=0..5 => triagem..instrumentos
-//  - pr=2 => vermelho, pr=1 => amarelo, pr=0 => verde
-//  - Se o paciente tem X repetições do procedimento, ele faz TUDO de uma só vez
-//    => tempoBloco = X * tempoMedio
 // ---------------------------------------------------------------------------
 void processarFilas(double tempoAtual)
 {
     for (int i = 0; i < MAX_PROCEDIMENTOS; i++)
     {
-        // TRATAMENTO ESPECIAL PARA TRIAGEM (i=0)
         if (i == 0)
         {
-            // Fila única em filas[0][0]
             while (!filas[i][0].filaVazia())
             {
                 if (!procedimentos[i]->temUnidadeLivre(tempoAtual))
                 {
+                    int idp = filas[i][0].proximoDaFilaId();
+                    std::cout
+                        << "Agora: Não há unidades livres para o paciente " << idp << " na triagem " << std::endl;
                     break;
                 }
 
-                // printAllPatientsStatus();
+                printAllPatientsStatus();
                 Paciente *p = filas[i][0].desenfileira();
 
                 double repeticoes = 1;
                 double tempoFim = procedimentos[i]->alocarUnidade(tempoAtual, repeticoes);
                 if (tempoFim < 0)
                 {
-                    // std::cout << "Paciente " << p->getId()
-                    //           << " não conseguiu entrar na triagem no tempo "
-                    //           << tempoAtual << std::endl;
+                    std::cout << "Paciente " << p->getId()
+                              << " não conseguiu entrar na triagem no tempo "
+                              << tempoAtual << std::endl;
 
                     p->setHoraEntradaFila(tempoAtual);
                     filas[i][0].enfileira(p);
                     break;
                 }
 
-                // std::cout << "Paciente " << p->getId()
-                //           << " entrou na triagem no tempo " << tempoAtual << std::endl;
+                std::cout << "Paciente " << p->getId()
+                          << " entrou na triagem no tempo " << tempoAtual << std::endl;
 
                 p->setEstadoAtual(3);
                 double tempoEspera = tempoAtual - p->getHoraEntradaFila();
@@ -196,27 +187,33 @@ void processarFilas(double tempoAtual)
                 evt.dadosExtras = NULL;
                 escalonador.insereEvento(evt);
 
-                // printf("[processarFilas] Pac %d ENTRADA=%.2f ATUAL=%.2f ESP=%.2f -> Fim=%.2f\n",
-                //        p->getId(),
-                //        p->getHoraEntradaFila(),
-                //        tempoAtual,
-                //        tempoEspera,
-                //        tempoFim);
+                printf("[processarFilas] Pac %d ENTRADA=%.2f ATUAL=%.2f ESP=%.2f -> Fim=%.2f\n",
+                       p->getId(),
+                       p->getHoraEntradaFila(),
+                       tempoAtual,
+                       tempoEspera,
+                       tempoFim);
             }
         }
         else
         {
-            // PARA PROCEDIMENTOS i=1..5, USAMOS AS TRES PRIORIDADES
             for (int pr = 2; pr >= 0; pr--)
             {
                 while (!filas[i][pr].filaVazia())
                 {
                     if (!procedimentos[i]->temUnidadeLivre(tempoAtual))
                     {
+                        if (i == 5)
+                        {
+                            filas[i][pr].printAll();
+                        }
+                        int idp = filas[i][0].proximoDaFilaId();
+                        std::cout
+                            << "Agora: Não há unidades livres para o paciente " << idp << " no procedimento " << i << " da prioridade " << pr << std::endl;
                         break;
                     }
 
-                    // printAllPatientsStatus();
+                    printAllPatientsStatus();
                     Paciente *p = filas[i][pr].desenfileira();
 
                     double repeticoes = 1;
@@ -240,9 +237,9 @@ void processarFilas(double tempoAtual)
 
                     if (repeticoes == 0)
                     {
-                        // std::cout << "Paciente " << p->getId()
-                        //           << " repeticoes=0 no procedimento " << i
-                        //           << ". Promovendo para próximo passo.\n";
+                        std::cout << "Paciente " << p->getId()
+                                  << " repeticoes=0 no procedimento " << i
+                                  << ". Promovendo para próximo passo.\n";
                         int urg = p->getGrauUrgencia();
                         p->setHoraEntradaFila(tempoAtual);
 
@@ -267,7 +264,7 @@ void processarFilas(double tempoAtual)
                             p->setInstrumentos(0);
                             p->setEstadoAtual(14);
                             p->calcularAltaEtempoTotal();
-                            // printf("[processarFilas] Pac %d => Alta final!\n", p->getId());
+                            printf("[processarFilas] Pac %d => Alta final!\n", p->getId());
                             break;
                         }
                         continue;
@@ -276,18 +273,18 @@ void processarFilas(double tempoAtual)
                     double tempoFim = procedimentos[i]->alocarUnidade(tempoAtual, repeticoes);
                     if (tempoFim < 0)
                     {
-                        // std::cout << "Agora: Paciente " << p->getId()
-                        //           << " não conseguiu entrar no proc=" << i
-                        //           << " pr=" << pr << " no tempo " << tempoAtual
-                        //           << std::endl;
+                        std::cout << "Agora: Paciente " << p->getId()
+                                  << " não conseguiu entrar no proc=" << i
+                                  << " pr=" << pr << " no tempo " << tempoAtual
+                                  << std::endl;
                         p->setHoraEntradaFila(tempoAtual);
                         filas[i][pr].enfileira(p);
                         break;
                     }
-                    // std::cout << "Agora: Paciente " << p->getId()
-                    //           << " conseguiu entrar no proc=" << i
-                    //           << " pr=" << pr << " no tempo " << tempoAtual
-                    //           << std::endl;
+                    std::cout << "Agora: Paciente " << p->getId()
+                              << " conseguiu entrar no proc=" << i
+                              << " pr=" << pr << " no tempo " << tempoAtual
+                              << std::endl;
 
                     switch (i)
                     {
@@ -326,18 +323,17 @@ void processarFilas(double tempoAtual)
                     evt.dadosExtras = NULL;
                     escalonador.insereEvento(evt);
 
-                    // printf("[processarFilas] Pac %d ENTRADA=%.2f ATUAL=%.2f ESP=%.2f -> Fim=%.2f\n",
-                    //        p->getId(),
-                    //        p->getHoraEntradaFila(),
-                    //        tempoAtual,
-                    //        tempoEspera,
-                    //        tempoFim);
+                    printf("[processarFilas] Pac %d ENTRADA=%.2f ATUAL=%.2f ESP=%.2f -> Fim=%.2f\n",
+                           p->getId(),
+                           p->getHoraEntradaFila(),
+                           tempoAtual,
+                           tempoEspera,
+                           tempoFim);
                 }
             }
         }
     }
 }
-
 void runSimulation()
 {
     double tempoAtual = 0.0;
@@ -373,7 +369,7 @@ void runSimulation()
         Evento e = escalonador.retiraProximoEvento();
         tempoAtual = e.tempoOcorrencia;
         Paciente *p = e.paciente;
-        // std::cout << "Puxando Prox Evento" << std::endl;
+        std::cout << "Puxando Prox Evento" << std::endl;
 
         switch (e.tipoEvento)
         {
@@ -384,8 +380,8 @@ void runSimulation()
             p->setHoraEntradaFila(tempoAtual);
             filas[0][0].enfileira(p);
 
-            // printf("[runSim] Pac %d CHEGOU => proc=0, urg=%d, t=%.2f\n",
-            //        p->getId(), urg, tempoAtual);
+            printf("[runSim] Pac %d CHEGOU => proc=0, urg=%d, t=%.2f\n",
+                   p->getId(), urg, tempoAtual);
         }
         break;
 
@@ -395,7 +391,7 @@ void runSimulation()
             int urg = p->getGrauUrgencia();
             p->setHoraEntradaFila(tempoAtual);
             filas[1][urg].enfileira(p);
-            // printf("[runSim] Pac %d => Atendimento(1)\n", p->getId());
+            printf("[runSim] Pac %d => Atendimento(1)\n", p->getId());
         }
         break;
 
@@ -405,7 +401,7 @@ void runSimulation()
             {
                 p->setEstadoAtual(14);
                 p->calcularAltaEtempoTotal();
-                // printf("[runSim] Pac %d => Alta Imediata!\n", p->getId());
+                printf("[runSim] Pac %d => Alta Imediata!\n", p->getId());
             }
             else
             {
@@ -413,7 +409,7 @@ void runSimulation()
                 int urg = p->getGrauUrgencia();
                 p->setHoraEntradaFila(tempoAtual);
                 filas[2][urg].enfileira(p);
-                // printf("[runSim] Pac %d => Medidas(2)\n", p->getId());
+                printf("[runSim] Pac %d => Medidas(2)\n", p->getId());
             }
         }
         break;
@@ -425,7 +421,7 @@ void runSimulation()
             int urg = p->getGrauUrgencia();
             p->setHoraEntradaFila(tempoAtual);
             filas[3][urg].enfileira(p);
-            // printf("[runSim] Pac %d => Testes(3)\n", p->getId());
+            printf("[runSim] Pac %d => Testes(3)\n", p->getId());
         }
         break;
 
@@ -436,7 +432,7 @@ void runSimulation()
             int urg = p->getGrauUrgencia();
             p->setHoraEntradaFila(tempoAtual);
             filas[4][urg].enfileira(p);
-            // printf("[runSim] Pac %d => Exames(4)\n", p->getId());
+            printf("[runSim] Pac %d => Exames(4)\n", p->getId());
         }
         break;
 
@@ -447,7 +443,7 @@ void runSimulation()
             int urg = p->getGrauUrgencia();
             p->setHoraEntradaFila(tempoAtual);
             filas[5][urg].enfileira(p);
-            // printf("[runSim] Pac %d => Instrumentos(5)\n", p->getId());
+            printf("[runSim] Pac %d => Instrumentos(5)\n", p->getId());
         }
         break;
 
@@ -456,12 +452,15 @@ void runSimulation()
             p->setInstrumentos(0);
             p->setEstadoAtual(14);
             p->calcularAltaEtempoTotal();
-            // printf("[runSim] Pac %d => Alta final!\n", p->getId());
+            printf("[runSim] Pac %d => Alta final!\n", p->getId());
+            if (p->getId() == 9916448){
+                std::cout <<"Tempo de saida do paciente eh "<< tempoAtual << std::endl;
+            }
         }
         break;
 
         default:
-            // printf("[runSim] Evento %d desconhecido.\n", e.tipoEvento);
+            printf("[runSim] Evento %d desconhecido.\n", e.tipoEvento);
             break;
         }
 
@@ -529,14 +528,14 @@ int main(int argc, char *argv[])
 {
     if (argc < 2)
     {
-        // printf("Uso: %s <arquivo.csv>\n", argv[0]);
+        printf("Uso: %s <arquivo.csv>\n", argv[0]);
         return 1;
     }
 
     FILE *arq = fopen(argv[1], "r");
     if (!arq)
     {
-        // printf("Erro ao abrir %s\n", argv[1]);
+        printf("Erro ao abrir %s\n", argv[1]);
         return 1;
     }
 

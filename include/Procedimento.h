@@ -7,7 +7,7 @@ class Procedimento {
 private:
     double tempoMedio; // Tempo médio para concluir um procedimento
     int numeroUnidades; // Número de unidades disponíveis
-    double tempoOcupadoAte[20000]; // Array fixo para controlar horários ocupados de cada unidade
+    double tempoOcupadoAte[200000]; // Array fixo para controlar horários ocupados de cada unidade
 
 public:
     // Construtor
