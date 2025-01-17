@@ -12,7 +12,7 @@ struct Evento {
     int    tipoEvento;       // Tipo do evento
     Paciente* paciente;      // Ponteiro para o paciente
     void* dadosExtras;       // Dados extras, se necessário
-    int eventId;             // ID do evento para desempate
+    int eventId;             // ID do evento (aqui não será mais usado no desempate)
 };
 
 class Escalonador {
@@ -21,7 +21,8 @@ private:
     int tamHeap;
     int nextEventId; // Próximo ID para eventos
 
-    // Compara somente tempoOcorrencia e eventId
+    // Compara primeiro por tempoOcorrencia,
+    // em caso de empate, por paciente->getId()
     bool menorQue(const Evento& a, const Evento& b);
 
     void heapifyUp(int indice);

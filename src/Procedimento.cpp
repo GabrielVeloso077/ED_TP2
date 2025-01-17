@@ -67,6 +67,7 @@ double Procedimento::alocarUnidade(double tempoAtual, double Quantidade)
             tempoOcupadoAte[u] = tempoFim;
 
             // Log de depuração (unidade alocada)
+            /*
             printf("[Procedimento] Alocado na UNIDADE %d (livre) em t=%.2f; "
                    "ficará ocupada até %.2f\n",
                    u, tempoAtual, tempoFim);
@@ -85,12 +86,14 @@ double Procedimento::alocarUnidade(double tempoAtual, double Quantidade)
                 }
             }
             printf("\n");
+            */
 
             return tempoFim;
         }
     }
 
     // Se não encontrou nenhuma unidade livre (tempoOcupadoAte[u] > tempoAtual para todas)
+    /*
     printf("[Procedimento] NENHUMA UNIDADE livre em t=%.2f!\n", tempoAtual);
     printf("  >> STATUS de TODAS as unidades:\n");
     for (int k = 0; k < numeroUnidades; k++)
@@ -98,6 +101,7 @@ double Procedimento::alocarUnidade(double tempoAtual, double Quantidade)
         printf("     - Unidade %d ocupada até %.2f\n", k, tempoOcupadoAte[k]);
     }
     printf("\n");
+    */
 
     return -1.0;
 }
@@ -120,13 +124,15 @@ bool Procedimento::temUnidadeLivre(double tempoAtual)
         // Verifica se a unidade u está livre no instante 'tempoAtual'
         if (tempoOcupadoAte[u] <= tempoAtual)
         {
-            // Achamos uma unidade livre.
+            /*
             printf("[Procedimento] Unidade %d livre em t=%.2f\n", u, tempoAtual);
+            */
             return true;
         }
     }
 
     // Se não encontrou nenhuma unidade livre (tempoOcupadoAte[u] > tempoAtual para todas)
+    /*
     printf("[Procedimento] NENHUMA UNIDADE livre em t=%.2f!\n", tempoAtual);
     printf("  >> STATUS de TODAS as unidades:\n");
     for (int k = 0; k < numeroUnidades; k++)
@@ -134,6 +140,7 @@ bool Procedimento::temUnidadeLivre(double tempoAtual)
         printf("     - Unidade %d ocupada até %.2f\n", k, tempoOcupadoAte[k]);
     }
     printf("\n");
+    */
 
     return false;
 }
